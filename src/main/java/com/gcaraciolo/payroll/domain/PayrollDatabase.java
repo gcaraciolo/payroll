@@ -23,4 +23,10 @@ public class PayrollDatabase {
         employees.put(empId, e);
     }
 
+    public Employee deleteEmployee(int empId) {
+        var e = getEmployee(empId);
+        employees.remove(empId);
+        return e;
+    }
+
 }

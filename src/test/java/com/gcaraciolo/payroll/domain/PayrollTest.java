@@ -12,13 +12,15 @@ import com.gcaraciolo.payroll.domain.AddSalariedEmployee;
 @SpringBootTest
 public class PayrollTest {
 
+    PayrollDatabase payrollDatabase = PayrollDatabase.instance();
+
     @Test
     public void testAddSalariedEmployee() {
         int empId = 1;
         var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.00);
         t.execute();
 
-        var e = PayrollDatabase.instance().getEmployee(empId);
+        var e = payrollDatabase.getEmployee(empId);
         assertTrue(e.getName().equals("Guilherme"));
 
         SalariedClassification pc = (SalariedClassification) e.getPaymentClassification();
@@ -37,7 +39,7 @@ public class PayrollTest {
         var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
         t.execute();
 
-        var e = PayrollDatabase.instance().getEmployee(empId);
+        var e = payrollDatabase.getEmployee(empId);
         assertTrue(e.getName().equals("Guilherme"));
 
         HourlyClassification pc = (HourlyClassification) e.getPaymentClassification();
@@ -51,12 +53,12 @@ public class PayrollTest {
     }
 
     @Test
-    public void addCommissionedEmployee() {
+    public void testAddCommissionedEmployee() {
         int empId = 1;
         var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.0, 0.1);
         t.execute();
 
-        var e = PayrollDatabase.instance().getEmployee(empId);
+        var e = payrollDatabase.getEmployee(empId);
         assertTrue(e.getName().equals("Guilherme"));
 
         CommissionedClassification pc = (CommissionedClassification) e.getPaymentClassification();
@@ -68,6 +70,25 @@ public class PayrollTest {
 
         HoldMethod pm = (HoldMethod) e.getPaymentMethod();
         assertNotNull(pm);
+    }
+
+    @Test
+    public void testDeleteEmployee() {
+        int empId = 3;
+        var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.0);
+        t.execute();
+        {
+            var e = payrollDatabase.getEmployee(empId);
+            assertNotNull(e);
+        }
+
+        var dt = new DeleteEmployeeTransaction(empId);
+        dt.execute();
+        {
+            var e = payrollDatabase.getEmployee(empId);
+            assertTrue(e == null);
+        }
+
     }
 
 }

@@ -106,4 +106,20 @@ public class PayrollTest {
         assertEquals(8.0, tc.getHours());
     }
 
+    @Test
+    public void testSalesReceiptTransaction() {
+        int empId = 3;
+        var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.0, 0.1);
+        t.execute();
+
+        var srt = new SalesReceiptTransaction(empId, 20011101, 79000.00);
+        srt.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+
+        var pc = (CommissionedClassification) e.getPaymentClassification();
+        SalesReceipt tc = pc.getSalesReceipt(20011101);
+        assertEquals(79000.00, tc.getAmount());
+    }
+
 }

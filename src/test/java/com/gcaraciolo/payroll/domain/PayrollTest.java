@@ -180,6 +180,50 @@ public class PayrollTest {
         assertCommissionedEmployee(e, 1500.00, 2.5);
     }
 
+    @Test
+    public void testChangeDirectTransaction() {
+        int empId = 1;
+        var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.00);
+        t.execute();
+
+        var cdt = new ChangeEmployeeDirectTransaction(empId);
+        cdt.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+
+        assertTrue(e.getPaymentMethod() instanceof DirectMethod);
+    }
+
+    @Test
+    public void testChangeMailTransaction() {
+        int empId = 1;
+        var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.00);
+        t.execute();
+
+        var cmt = new ChangeEmployeeMailTransaction(empId);
+        cmt.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+
+        assertTrue(e.getPaymentMethod() instanceof MailMethod);
+    }
+
+    @Test
+    public void testChangeHoldTransaction() {
+        int empId = 1;
+        var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.00);
+        t.execute();
+
+        var cmt = new ChangeEmployeeMailTransaction(empId);
+        cmt.execute();
+
+        var cht = new ChangeEmployeeHoldTransaction(empId);
+        cht.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        assertTrue(e.getPaymentMethod() instanceof HoldMethod);
+    }
+
     private void assertSalariedEmployee(Employee e, Double salary) {
         SalariedClassification pc = (SalariedClassification) e.getPaymentClassification();
         assertEquals(salary, pc.getSalary());

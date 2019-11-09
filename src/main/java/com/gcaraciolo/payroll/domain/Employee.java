@@ -34,4 +34,12 @@ public class Employee {
     public void setAffiliation(Affiliation affiliation) {
         this.affiliation = affiliation;
     }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changeAddress(String address) {
+        this.address = address;
+    }
 }

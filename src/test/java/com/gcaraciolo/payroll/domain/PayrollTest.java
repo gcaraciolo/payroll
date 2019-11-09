@@ -143,4 +143,29 @@ public class PayrollTest {
         assertEquals(12.95, sc.getAmount());
     }
 
+    @Test
+    public void testChangeNameTransaction() {
+        int empId = 2;
+        var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
+        t.execute();
+
+        var cnt = new ChangeEmployeeNameTransaction(empId, "Gustavo");
+        cnt.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        assertTrue(e.getName().equals("Gustavo"));
+    }
+
+    @Test
+    public void testChangeAddressTransaction() {
+        int empId = 2;
+        var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
+        t.execute();
+
+        var cnt = new ChangeEmployeeAddressTransaction(empId, "Casa");
+        cnt.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        assertTrue(e.getAddress().equals("Casa"));
+    }
 }

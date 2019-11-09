@@ -7,6 +7,7 @@ public class PayrollDatabase {
 
     private static PayrollDatabase theInstance = new PayrollDatabase();
     private static Map<Integer, Employee> employees = new HashMap<Integer, Employee>();
+    private static Map<Integer, Employee> affiliationMembers = new HashMap<Integer, Employee>();
 
     private PayrollDatabase() {
     }
@@ -27,6 +28,14 @@ public class PayrollDatabase {
         var e = getEmployee(empId);
         employees.remove(empId);
         return e;
+    }
+
+    public void addUnionMember(int memberId, Employee e) {
+        affiliationMembers.put(memberId, e);
+    }
+
+    public Employee getAffiliationMember(int memberId) {
+        return affiliationMembers.get(memberId);
     }
 
 }

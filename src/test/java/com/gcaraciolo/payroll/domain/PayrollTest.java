@@ -122,4 +122,25 @@ public class PayrollTest {
         assertEquals(79000.00, tc.getAmount());
     }
 
+    @Test
+    public void testAddServiceCharge() {
+        int empId = 2;
+        var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
+        t.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        UnionAffiliation af = new UnionAffiliation(3.5);
+        e.setAffiliation(af);
+
+        int memberId = 86;
+        payrollDatabase.addUnionMember(memberId, e);
+
+        var sct = new ServiceChargeTransaction(memberId, 20011101, 12.95);
+        sct.execute();
+
+        ServiceCharge sc = af.getServiceCharge(20011101);
+        assertNotNull(sc);
+        assertEquals(12.95, sc.getAmount());
+    }
+
 }

@@ -11,6 +11,7 @@ public class Employee {
     private PaymentMethod paymentMethod;
     private PaymentClassification paymentClassification;
     private PaymentSchedule paymentSchedule;
+    private Affiliation affiliation;
 
     public Employee(Integer itsId, String itsName, String itsAddress) {
         this.id = itsId;
@@ -30,4 +31,7 @@ public class Employee {
         this.paymentSchedule = schedule;
     }
 
+    public void setAffiliation(Affiliation affiliation) {
+        this.affiliation = affiliation;
+    }
 }

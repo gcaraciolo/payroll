@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.gcaraciolo.payroll.domain.AddSalariedEmployee;
-
 @SpringBootTest
 public class PayrollTest {
 
@@ -167,5 +165,57 @@ public class PayrollTest {
 
         var e = payrollDatabase.getEmployee(empId);
         assertTrue(e.getAddress().equals("Casa"));
+    }
+
+    @Test
+    public void testChangeHourlyTransaction() {
+        int empId = 3;
+        var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.0, 1.0);
+        t.execute();
+
+        var cht = new ChangeEmployeeHourlyTransaction(empId, 2.5);
+        cht.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        var hc = (HourlyClassification) e.getPaymentClassification();
+        assertEquals(2.5, hc.getHourlyRate());
+
+        var ps = e.getPaymentSchedule();
+        assertTrue(ps instanceof WeeklySchedule);
+    }
+
+    @Test
+    public void testChangeSalariedTransaction() {
+        int empId = 3;
+        var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.0, 1.0);
+        t.execute();
+
+        var cst = new ChangeEmployeeSalariedTransaction(empId, 1500.00);
+        cst.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        var sc = (SalariedClassification) e.getPaymentClassification();
+        assertEquals(1500.00, sc.getSalary());
+
+        var ps = e.getPaymentSchedule();
+        assertTrue(ps instanceof MonthlySchedule);
+    }
+
+    @Test
+    public void testChangeCommissionedTransaction() {
+        int empId = 3;
+        var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.0);
+        t.execute();
+
+        var cct = new ChangeEmployeeCommissionedTransaction(empId, 1500.00, 2.5);
+        cct.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        var sc = (CommissionedClassification) e.getPaymentClassification();
+        assertEquals(1500.00, sc.getSalary());
+        assertEquals(2.5, sc.getCommissionRate());
+
+        var ps = e.getPaymentSchedule();
+        assertTrue(ps instanceof BiweeklySchedule);
     }
 }

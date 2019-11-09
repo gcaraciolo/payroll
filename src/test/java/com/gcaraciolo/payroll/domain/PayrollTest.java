@@ -88,7 +88,22 @@ public class PayrollTest {
             var e = payrollDatabase.getEmployee(empId);
             assertTrue(e == null);
         }
+    }
 
+    @Test
+    public void testTimeCardTransaction() {
+        int empId = 3;
+        var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
+        t.execute();
+
+        var tct = new TimeCardTransaction(empId, 20011031, 8.0);
+        tct.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+
+        var pc = (HourlyClassification) e.getPaymentClassification();
+        TimeCard tc = pc.getTimeCard(20011031);
+        assertEquals(8.0, tc.getHours());
     }
 
 }

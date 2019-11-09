@@ -97,14 +97,14 @@ public class PayrollTest {
     @Test
     public void testAddServiceCharge() {
         int empId = 2;
+        int memberId = 86;
         var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
         t.execute();
 
         var e = payrollDatabase.getEmployee(empId);
-        UnionAffiliation af = new UnionAffiliation(3.5);
+        UnionAffiliation af = new UnionAffiliation(memberId, 3.5);
         e.setAffiliation(af);
 
-        int memberId = 86;
         payrollDatabase.addUnionMember(memberId, e);
 
         var sct = new ServiceChargeTransaction(memberId, 20011101, 12.95);
@@ -222,6 +222,41 @@ public class PayrollTest {
 
         var e = payrollDatabase.getEmployee(empId);
         assertTrue(e.getPaymentMethod() instanceof HoldMethod);
+    }
+
+    @Test
+    public void testChangeMemberTransaction() {
+        int empId = 2;
+        int memberId = 1231;
+        var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
+        t.execute();
+
+        var cmt = new ChangeEmployeeMemberTransaction(empId, memberId, 99.42);
+        cmt.execute();
+
+        var e = payrollDatabase.getEmployee(empId);
+        var af = (UnionAffiliation) e.getAffiliation();
+        assertEquals(99.42, af.getDues());
+
+        var m = payrollDatabase.getAffiliationMember(memberId);
+        assertEquals(e, m);
+    }
+
+    @Test
+    public void testChangeUnaffiliatedTransaction() {
+        int empId = 2;
+        int memberId = 1231;
+        var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
+        t.execute();
+
+        var cmt = new ChangeEmployeeMemberTransaction(empId, memberId, 99.42);
+        cmt.execute();
+
+        var ceu = new ChangeEmployeeUnaffiliatedTransaction(empId);
+        ceu.execute();
+
+        var m = payrollDatabase.getAffiliationMember(memberId);
+        assertTrue(m == null);
     }
 
     private void assertSalariedEmployee(Employee e, Double salary) {

@@ -8,10 +8,12 @@ import lombok.Getter;
 @Getter
 public class UnionAffiliation implements Affiliation {
 
+    private Integer memberId;
     private Double dues;
     private Map<String, ServiceCharge> servicecharges = new HashMap<String, ServiceCharge>();
 
-    public UnionAffiliation(Double dues) {
+    public UnionAffiliation(Integer memberId, Double dues) {
+        this.memberId = memberId;
         this.dues = dues;
     }
 

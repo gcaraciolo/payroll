@@ -38,4 +38,8 @@ public class PayrollDatabase {
         return affiliationMembers.get(memberId);
     }
 
+    public void deleteUnionMember(int memberId) {
+        affiliationMembers.remove(memberId);
+    }
+
 }

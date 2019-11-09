@@ -21,14 +21,7 @@ public class PayrollTest {
         var e = payrollDatabase.getEmployee(empId);
         assertTrue(e.getName().equals("Guilherme"));
 
-        SalariedClassification pc = (SalariedClassification) e.getPaymentClassification();
-        assertEquals(1000.00, pc.getSalary());
-
-        MonthlySchedule ps = (MonthlySchedule) e.getPaymentSchedule();
-        assertNotNull(ps);
-
-        HoldMethod pm = (HoldMethod) e.getPaymentMethod();
-        assertNotNull(pm);
+        assertSalariedEmployee(e, 1000.00);
     }
 
     @Test
@@ -38,16 +31,7 @@ public class PayrollTest {
         t.execute();
 
         var e = payrollDatabase.getEmployee(empId);
-        assertTrue(e.getName().equals("Guilherme"));
-
-        HourlyClassification pc = (HourlyClassification) e.getPaymentClassification();
-        assertEquals(1, 0, pc.getHourlyRate());
-
-        WeeklySchedule ps = (WeeklySchedule) e.getPaymentSchedule();
-        assertNotNull(ps);
-
-        HoldMethod pm = (HoldMethod) e.getPaymentMethod();
-        assertNotNull(pm);
+        assertHourlyEmployee(e, 1.0);
     }
 
     @Test
@@ -57,17 +41,7 @@ public class PayrollTest {
         t.execute();
 
         var e = payrollDatabase.getEmployee(empId);
-        assertTrue(e.getName().equals("Guilherme"));
-
-        CommissionedClassification pc = (CommissionedClassification) e.getPaymentClassification();
-        assertEquals(1000.00, pc.getSalary());
-        assertEquals(0.1, pc.getCommissionRate());
-
-        BiweeklySchedule ps = (BiweeklySchedule) e.getPaymentSchedule();
-        assertNotNull(ps);
-
-        HoldMethod pm = (HoldMethod) e.getPaymentMethod();
-        assertNotNull(pm);
+        assertCommissionedEmployee(e, 1000.0, 0.1);
     }
 
     @Test
@@ -177,11 +151,7 @@ public class PayrollTest {
         cht.execute();
 
         var e = payrollDatabase.getEmployee(empId);
-        var hc = (HourlyClassification) e.getPaymentClassification();
-        assertEquals(2.5, hc.getHourlyRate());
-
-        var ps = e.getPaymentSchedule();
-        assertTrue(ps instanceof WeeklySchedule);
+        assertHourlyEmployee(e, 2.5);
     }
 
     @Test
@@ -194,11 +164,7 @@ public class PayrollTest {
         cst.execute();
 
         var e = payrollDatabase.getEmployee(empId);
-        var sc = (SalariedClassification) e.getPaymentClassification();
-        assertEquals(1500.00, sc.getSalary());
-
-        var ps = e.getPaymentSchedule();
-        assertTrue(ps instanceof MonthlySchedule);
+        assertSalariedEmployee(e, 1500.00);
     }
 
     @Test
@@ -211,11 +177,40 @@ public class PayrollTest {
         cct.execute();
 
         var e = payrollDatabase.getEmployee(empId);
-        var sc = (CommissionedClassification) e.getPaymentClassification();
-        assertEquals(1500.00, sc.getSalary());
-        assertEquals(2.5, sc.getCommissionRate());
+        assertCommissionedEmployee(e, 1500.00, 2.5);
+    }
 
-        var ps = e.getPaymentSchedule();
-        assertTrue(ps instanceof BiweeklySchedule);
+    private void assertSalariedEmployee(Employee e, Double salary) {
+        SalariedClassification pc = (SalariedClassification) e.getPaymentClassification();
+        assertEquals(salary, pc.getSalary());
+
+        MonthlySchedule ps = (MonthlySchedule) e.getPaymentSchedule();
+        assertNotNull(ps);
+
+        HoldMethod pm = (HoldMethod) e.getPaymentMethod();
+        assertNotNull(pm);
+    }
+
+    private void assertHourlyEmployee(Employee e, Double hourlyRate) {
+        HourlyClassification pc = (HourlyClassification) e.getPaymentClassification();
+        assertEquals(hourlyRate, pc.getHourlyRate());
+
+        WeeklySchedule ps = (WeeklySchedule) e.getPaymentSchedule();
+        assertNotNull(ps);
+
+        HoldMethod pm = (HoldMethod) e.getPaymentMethod();
+        assertNotNull(pm);
+    }
+
+    private void assertCommissionedEmployee(Employee e, Double salary, Double commissionRate) {
+        CommissionedClassification pc = (CommissionedClassification) e.getPaymentClassification();
+        assertEquals(salary, pc.getSalary());
+        assertEquals(commissionRate, pc.getCommissionRate());
+
+        BiweeklySchedule ps = (BiweeklySchedule) e.getPaymentSchedule();
+        assertNotNull(ps);
+
+        HoldMethod pm = (HoldMethod) e.getPaymentMethod();
+        assertNotNull(pm);
     }
 }

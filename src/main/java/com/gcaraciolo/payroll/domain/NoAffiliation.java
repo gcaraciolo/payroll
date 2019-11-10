@@ -1,6 +1,6 @@
 package com.gcaraciolo.payroll.domain;
 
-import java.time.LocalDate;
+import com.gcaraciolo.common.DatePeriod;
 
 /**
  * Null Object for non affiliated employees
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class NoAffiliation implements Affiliation {
 
     @Override
-    public Double calculateDeductions(LocalDate date) {
+    public Double calculateDeductions(DatePeriod datePeriod) {
         return 0.0;
     }
 }

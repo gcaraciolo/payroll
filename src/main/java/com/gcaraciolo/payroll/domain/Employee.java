@@ -54,7 +54,7 @@ public class Employee {
     public Paycheck payday(LocalDate payDate) {
         DatePeriod payPeriod = paymentSchedule.payPeriod(payDate);
         Double grossPay = paymentClassification.calculatePay(payPeriod);
-        Double deductions = affiliation.calculateDeductions(payDate);
+        Double deductions = affiliation.calculateDeductions(payPeriod);
         Double netPay = grossPay - deductions;
         return new Paycheck(payDate, grossPay, deductions, netPay);
     }

@@ -14,6 +14,6 @@ public class WeeklySchedule implements PaymentSchedule {
 
     @Override
     public DatePeriod payPeriod(LocalDate payDate) {
-        return new DatePeriod(payDate.minusDays(7), payDate);
+        return new DatePeriod(payDate.minusDays(6), payDate);
     }
 }

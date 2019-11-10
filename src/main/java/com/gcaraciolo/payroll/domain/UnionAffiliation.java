@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.gcaraciolo.common.DatePeriod;
+
 import lombok.Getter;
 
 @Getter
@@ -30,22 +32,19 @@ public class UnionAffiliation implements Affiliation {
     }
 
     @Override
-    public Double calculateDeductions(LocalDate date) {
-        return dues * accruedsInPayDay(date);
+    public Double calculateDeductions(DatePeriod datePeriod) {
+        return dues * numberOfDeductableWeeks(datePeriod);
     }
 
-    private int accruedsInPayDay(LocalDate date) {
-        int accrued = 0;
-        LocalDate dayIterator = LocalDate.of(date.getYear(), date.getMonthValue(), 1);
-        LocalDate lastDayOfMonth = LocalDate.of(date.getYear(), date.getMonthValue(), date.getMonth().maxLength());
+    private int numberOfDeductableWeeks(DatePeriod datePeriod) {
+        var deductableWeeks = 0;
 
-        while (dayIterator.isBefore(lastDayOfMonth) || dayIterator.isEqual(lastDayOfMonth)) {
-            if (dayIterator.getDayOfWeek() == DayOfWeek.FRIDAY) {
-                accrued++;
+        for (var day = datePeriod.getBegin(); day.isBefore(datePeriod.getEnd().plusDays(1)); day = day.plusDays(1)) {
+            if (day.getDayOfWeek() == DayOfWeek.FRIDAY) {
+                deductableWeeks++;
             }
-            dayIterator = dayIterator.plusDays(1);
         }
 
-        return accrued;
+        return deductableWeeks;
     }
 }

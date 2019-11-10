@@ -15,6 +15,6 @@ public class BiweeklySchedule implements PaymentSchedule {
 
     @Override
     public DatePeriod payPeriod(LocalDate payDate) {
-        return new DatePeriod(payDate.minusDays(15), payDate);
+        return new DatePeriod(payDate.minusDays(13), payDate);
     }
 }

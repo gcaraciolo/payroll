@@ -570,13 +570,14 @@ public class PayrollTest {
 
         new AddHourlyEmployee(empId, "Guilherme", "Home", 4.75).execute();
         new ChangeEmployeeMemberTransaction(empId, memberId, 2.15).execute();
-        new TimeCardTransaction(empId, LocalDate.of(2001, 11, 27), 8.0);
+        new TimeCardTransaction(empId, LocalDate.of(2001, 11, 27), 8.0).execute();
+        ;
 
         var payDate = LocalDate.of(2001, 11, 30);
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
-        assertPaycheck(pc, payDate, 18.03);
+        assertPaycheck(pc, payDate, 35.85);
     }
 
     private void assertPaycheck(Paycheck paycheck, LocalDate payDate, Double pay) {

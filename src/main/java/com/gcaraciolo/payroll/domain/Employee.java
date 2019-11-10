@@ -1,5 +1,7 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.LocalDate;
+
 import lombok.Getter;
 
 @Getter
@@ -41,5 +43,16 @@ public class Employee {
 
     public void changeAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isPayDate(LocalDate payDate) {
+        return paymentSchedule.isPayDate(payDate);
+    }
+
+    public Paycheck payday(LocalDate payDate) {
+        Double grossPay = paymentClassification.calculatePay(payDate);
+        Double deductions = affiliation.calculateDeductions(payDate);
+        Double netPay = grossPay - deductions;
+        return new Paycheck(payDate, grossPay, deductions, netPay);
     }
 }

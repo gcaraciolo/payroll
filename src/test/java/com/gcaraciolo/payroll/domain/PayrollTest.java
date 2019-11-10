@@ -264,6 +264,54 @@ public class PayrollTest {
         assertTrue(m == null);
     }
 
+    @Test
+    public void testPaySingleSalariedEmployee() {
+        {
+            int empId = 1;
+            var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.00);
+            t.execute();
+
+            LocalDate payDate = LocalDate.of(2001, 11, 30);
+            var pt = new PaydayTransaction(payDate);
+            pt.execute();
+
+            Paycheck pc = pt.getPaycheck(empId);
+            assertTrue(pc != null);
+            assertTrue(pc.getPayDate().equals(payDate));
+            assertEquals(pc.getDeductions(), 0.0);
+            assertEquals(pc.getNetPay(), 1000.00);
+        }
+        {
+            int empId = 2;
+            var t = new AddSalariedEmployee(empId, "Gustavo", "Angola", 1500.00);
+            t.execute();
+
+            LocalDate payDate = LocalDate.of(2001, 11, 30);
+            var pt = new PaydayTransaction(payDate);
+            pt.execute();
+
+            Paycheck pc = pt.getPaycheck(empId);
+            assertTrue(pc != null);
+            assertTrue(pc.getPayDate().equals(payDate));
+            assertEquals(pc.getDeductions(), 0.0);
+            assertEquals(pc.getNetPay(), 1500.00);
+        }
+    }
+
+    @Test
+    public void testPaySingleSalariedEmployeeOnWrongDate() {
+        int empId = 1;
+        var t = new AddSalariedEmployee(empId, "Guilherme", "Home", 1000.00);
+        t.execute();
+
+        LocalDate payDate = LocalDate.of(2001, 11, 29);
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+
+        Paycheck pc = pt.getPaycheck(empId);
+        assertTrue(pc == null);
+    }
+
     private void assertSalariedEmployee(Employee e, Double salary) {
         SalariedClassification pc = (SalariedClassification) e.getPaymentClassification();
         assertEquals(salary, pc.getSalary());

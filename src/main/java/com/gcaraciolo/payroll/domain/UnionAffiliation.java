@@ -27,4 +27,9 @@ public class UnionAffiliation implements Affiliation {
         servicecharges.put(date.toString(), sc);
         return sc;
     }
+
+    @Override
+    public Double calculateDeductions(LocalDate date) {
+        return 0.0;
+    }
 }

@@ -27,4 +27,9 @@ public class CommissionedClassification implements PaymentClassification {
     public SalesReceipt getSalesReceipt(LocalDate date) {
         return salesreceipts.get(date.toString());
     }
+
+    @Override
+    public Double calculatePay(LocalDate payDate) {
+        return salary;
+    }
 }

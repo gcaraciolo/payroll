@@ -25,4 +25,9 @@ public class HourlyClassification implements PaymentClassification {
     public TimeCard getTimeCard(LocalDate date) {
         return timecards.get(date.toString());
     }
+
+    @Override
+    public Double calculatePay(LocalDate payDate) {
+        return 1000.00;
+    }
 }

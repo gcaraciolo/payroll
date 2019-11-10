@@ -22,6 +22,7 @@ public abstract class AddEmployeeTransaction implements Transaction {
         e.setPaymentClassification(getClassification());
         e.setPaymentSchedule(getSchedule());
         e.setPaymentMethod(new HoldMethod());
+        e.setAffiliation(new NoAffiliation());
         this.payrollDatabase.addEmployee(empId, e);
     }
 

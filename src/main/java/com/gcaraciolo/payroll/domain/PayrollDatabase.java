@@ -1,6 +1,8 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PayrollDatabase {
@@ -40,6 +42,10 @@ public class PayrollDatabase {
 
     public void deleteUnionMember(int memberId) {
         affiliationMembers.remove(memberId);
+    }
+
+    public List<Integer> getAllEmployeeIds() {
+        return new ArrayList<Integer>(employees.keySet());
     }
 
 }

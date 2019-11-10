@@ -7,7 +7,6 @@ public class WeeklySchedule implements PaymentSchedule {
 
     @Override
     public boolean isPayDate(LocalDate payDate) {
-        var weekday = payDate.getDayOfWeek();
-        return weekday == DayOfWeek.FRIDAY;
+        return payDate.getDayOfWeek() == DayOfWeek.FRIDAY;
     }
 }

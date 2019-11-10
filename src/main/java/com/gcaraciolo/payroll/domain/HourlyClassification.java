@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.gcaraciolo.common.DatePeriod;
+
 import lombok.Getter;
 
 @Getter
@@ -27,8 +29,8 @@ public class HourlyClassification implements PaymentClassification {
     }
 
     @Override
-    public Double calculatePay(LocalDate payDate) {
-        return timecards.values().stream().filter(tc -> tc.isInPayPeriod(payDate))
+    public Double calculatePay(DatePeriod datePeriod) {
+        return timecards.values().stream().filter(tc -> datePeriod.containsDate(tc.getDate()))
                 .map(tc -> calculatePayForTimeCard(tc)).reduce(0.0, (a, b) -> a + b);
     }
 

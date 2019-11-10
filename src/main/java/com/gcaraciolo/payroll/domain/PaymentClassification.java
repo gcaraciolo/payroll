@@ -1,8 +1,8 @@
 package com.gcaraciolo.payroll.domain;
 
-import java.time.LocalDate;
+import com.gcaraciolo.common.DatePeriod;
 
 public interface PaymentClassification {
 
-    public Double calculatePay(LocalDate payDate);
+    public Double calculatePay(DatePeriod payPeriod);
 }

@@ -2,6 +2,8 @@ package com.gcaraciolo.payroll.domain;
 
 import java.time.LocalDate;
 
+import com.gcaraciolo.common.DatePeriod;
+
 import lombok.Getter;
 
 @Getter
@@ -50,7 +52,8 @@ public class Employee {
     }
 
     public Paycheck payday(LocalDate payDate) {
-        Double grossPay = paymentClassification.calculatePay(payDate);
+        DatePeriod payPeriod = paymentSchedule.payPeriod(payDate);
+        Double grossPay = paymentClassification.calculatePay(payPeriod);
         Double deductions = affiliation.calculateDeductions(payDate);
         Double netPay = grossPay - deductions;
         return new Paycheck(payDate, grossPay, deductions, netPay);

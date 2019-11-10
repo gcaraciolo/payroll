@@ -1,6 +1,6 @@
 package com.gcaraciolo.payroll.domain;
 
-import java.time.LocalDate;
+import com.gcaraciolo.common.DatePeriod;
 
 import lombok.Getter;
 
@@ -14,7 +14,7 @@ public class SalariedClassification implements PaymentClassification {
     }
 
     @Override
-    public Double calculatePay(LocalDate payDate) {
+    public Double calculatePay(DatePeriod datePeriod) {
         return salary;
     }
 }

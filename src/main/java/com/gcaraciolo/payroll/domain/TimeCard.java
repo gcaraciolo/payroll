@@ -20,7 +20,7 @@ public class TimeCard {
     public boolean isInPayPeriod(LocalDate payDate) {
         int endDate = payDate.getDayOfMonth();
         int startDate = payDate.getDayOfMonth() - 7;
-        return (date.getDayOfMonth() >= startDate) && (date.getDayOfMonth() <= endDate);
+        return (date.getDayOfMonth() >= startDate) && (date.getDayOfMonth() < endDate);
     }
 
     public boolean isInWeekday() {

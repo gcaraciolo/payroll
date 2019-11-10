@@ -563,10 +563,26 @@ public class PayrollTest {
         assertPaycheck(pc, payDate, 900.15);
     }
 
+    @Test
+    public void testHourlyEmployeeUnionMemberDues() {
+        int empId = 1;
+        int memberId = 123;
+
+        new AddHourlyEmployee(empId, "Guilherme", "Home", 4.75).execute();
+        new ChangeEmployeeMemberTransaction(empId, memberId, 2.15).execute();
+        new TimeCardTransaction(empId, LocalDate.of(2001, 11, 27), 8.0);
+
+        var payDate = LocalDate.of(2001, 11, 30);
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertPaycheck(pc, payDate, 18.03);
+    }
+
     private void assertPaycheck(Paycheck paycheck, LocalDate payDate, Double pay) {
         assertTrue(paycheck != null);
         assertTrue(paycheck.getPayDate().equals(payDate));
-        assertEquals(paycheck.getNetPay(), pay);
+        assertEquals(pay, paycheck.getNetPay());
     }
 
     private void assertSalariedEmployee(Employee e, Double salary) {

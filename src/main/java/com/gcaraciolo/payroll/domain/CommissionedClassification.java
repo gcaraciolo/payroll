@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.gcaraciolo.common.DatePeriod;
+
 import lombok.Getter;
 
 @Getter
@@ -29,12 +31,12 @@ public class CommissionedClassification implements PaymentClassification {
     }
 
     @Override
-    public Double calculatePay(LocalDate payDate) {
-        return salary + commissions(payDate);
+    public Double calculatePay(DatePeriod datePeriod) {
+        return salary + commissions(datePeriod);
     }
 
-    private Double commissions(LocalDate payDate) {
-        return salesreceipts.values().stream().filter(sr -> sr.isInPayPeriod(payDate))
+    private Double commissions(DatePeriod datePeriod) {
+        return salesreceipts.values().stream().filter(sr -> datePeriod.containsDate(sr.getDate()))
                 .map(sr -> calculateSalesReceiptCommission(sr)).reduce(0.0, (a, b) -> a + b);
     }
 

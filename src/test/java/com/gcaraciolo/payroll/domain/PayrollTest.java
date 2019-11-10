@@ -312,6 +312,115 @@ public class PayrollTest {
         assertTrue(pc == null);
     }
 
+    @Test
+    public void testPaySingleHourlyEmployeeNoTimeCards() {
+        int empId = 1;
+        var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 13.45);
+        t.execute();
+
+        var payDate = LocalDate.of(2001, 11, 9); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertHourlyPaycheck(pc, payDate, 0.0);
+    }
+
+    @Test
+    public void testPaySingleHourlyEmployeeWithTimeCards() {
+        int empId = 1;
+        {
+            var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 13.45);
+            t.execute();
+        }
+        {
+            var workday = LocalDate.of(2001, 11, 5);
+            var t = new TimeCardTransaction(empId, workday, 2.0);
+            t.execute();
+        }
+        {
+            var workday = LocalDate.of(2001, 11, 6);
+            var t = new TimeCardTransaction(empId, workday, 8.0);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 9); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertHourlyPaycheck(pc, payDate, 134.5);
+    }
+
+    @Test
+    public void testPaySingleHourlyEmployeeWithTimeCardsOvertime() {
+        int empId = 1;
+        {
+            var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 13.45);
+            t.execute();
+        }
+        {
+            var workday = LocalDate.of(2001, 11, 5); // Monday
+            var t = new TimeCardTransaction(empId, workday, 9.0);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 9); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertHourlyPaycheck(pc, payDate, (8 + 1.5) * 13.45);
+    }
+
+    @Test
+    public void testPaySingleHourlyEmployeeOnWrongDate() {
+        int empId = 1;
+        {
+            var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 13.45);
+            t.execute();
+        }
+        {
+            var workdayOne = LocalDate.of(2001, 11, 5);
+            var t = new TimeCardTransaction(empId, workdayOne, 2.0);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 8); // Thursday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertTrue(pc == null);
+    }
+
+    @Test
+    public void testPaySingleHourlyEmployeeWithTimeCardsSpanningPeriods() {
+        int empId = 1;
+        {
+            var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 13.45);
+            t.execute();
+        }
+        {
+            var workday = LocalDate.of(2001, 11, 1); // last week
+            var t = new TimeCardTransaction(empId, workday, 2.0);
+            t.execute();
+        }
+        {
+            var workday = LocalDate.of(2001, 11, 6);
+            var t = new TimeCardTransaction(empId, workday, 8.0);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 9); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertHourlyPaycheck(pc, payDate, 107.6);
+    }
+
+    private void assertHourlyPaycheck(Paycheck paycheck, LocalDate payDate, Double pay) {
+        assertTrue(paycheck != null);
+        assertTrue(paycheck.getPayDate().equals(payDate));
+        assertEquals(paycheck.getNetPay(), pay);
+    }
+
     private void assertSalariedEmployee(Employee e, Double salary) {
         SalariedClassification pc = (SalariedClassification) e.getPaymentClassification();
         assertEquals(salary, pc.getSalary());

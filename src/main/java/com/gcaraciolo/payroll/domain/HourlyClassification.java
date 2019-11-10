@@ -28,6 +28,21 @@ public class HourlyClassification implements PaymentClassification {
 
     @Override
     public Double calculatePay(LocalDate payDate) {
-        return 1000.00;
+        return timecards.values().stream().filter(tc -> isInPayPeriod(tc, payDate))
+                .map(tc -> calculatePayForTimeCard(tc)).reduce(0.0, (a, b) -> a + b);
+    }
+
+    private Double calculatePayForTimeCard(TimeCard timecard) {
+        Double STRAIGHT_TIME_HOURS = 8.0;
+        Double OVERTIME_RATE = 1.5;
+        Double overtime = Math.max(0.0, timecard.getHours() - STRAIGHT_TIME_HOURS);
+        Double straightTime = timecard.getHours() - overtime;
+        return straightTime * hourlyRate + overtime * hourlyRate * OVERTIME_RATE;
+    }
+
+    private boolean isInPayPeriod(TimeCard timecard, LocalDate payDate) {
+        int endDate = payDate.getDayOfMonth();
+        int startDate = payDate.getDayOfMonth() - 5;
+        return (timecard.getDate().getDayOfMonth() >= startDate) && (timecard.getDate().getDayOfMonth() <= endDate);
     }
 }

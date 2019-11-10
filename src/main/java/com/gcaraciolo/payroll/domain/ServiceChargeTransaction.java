@@ -1,14 +1,16 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.LocalDate;
+
 public class ServiceChargeTransaction implements Transaction {
 
     private int memberId;
-    private long date;
+    private LocalDate date;
     private Double amount;
 
     private PayrollDatabase payrollDatabase = PayrollDatabase.instance();
 
-    public ServiceChargeTransaction(int memberId, long date, Double amount) {
+    public ServiceChargeTransaction(int memberId, LocalDate date, Double amount) {
         this.memberId = memberId;
         this.date = date;
         this.amount = amount;

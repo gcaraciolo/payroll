@@ -1,5 +1,6 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,13 +18,13 @@ public class UnionAffiliation implements Affiliation {
         this.dues = dues;
     }
 
-    public ServiceCharge getServiceCharge(long date) {
-        return servicecharges.get(Long.toString(date));
+    public ServiceCharge getServiceCharge(LocalDate date) {
+        return servicecharges.get(date.toString());
     }
 
-    public ServiceCharge addServiceCharge(long date, double amount) {
+    public ServiceCharge addServiceCharge(LocalDate date, double amount) {
         var sc = new ServiceCharge(date, amount);
-        servicecharges.put(Long.toString(date), sc);
+        servicecharges.put(date.toString(), sc);
         return sc;
     }
 }

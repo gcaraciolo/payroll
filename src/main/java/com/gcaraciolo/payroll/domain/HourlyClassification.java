@@ -1,5 +1,6 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,13 +16,13 @@ public class HourlyClassification implements PaymentClassification {
         this.hourlyRate = hourlyRate;
     }
 
-    public TimeCard addTimeCard(long date, double hours) {
+    public TimeCard addTimeCard(LocalDate date, double hours) {
         var tc = new TimeCard(date, hours);
-        timecards.put(Long.toString(date), tc);
+        timecards.put(date.toString(), tc);
         return tc;
     }
 
-    public TimeCard getTimeCard(long date) {
-        return timecards.get(Long.toString(date));
+    public TimeCard getTimeCard(LocalDate date) {
+        return timecards.get(date.toString());
     }
 }

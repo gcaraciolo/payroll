@@ -1,14 +1,16 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.LocalDate;
+
 public class SalesReceiptTransaction implements Transaction {
 
     private Integer empId;
-    private long date;
+    private LocalDate date;
     private Double amount;
 
     private PayrollDatabase payrollDatabase = PayrollDatabase.instance();
 
-    public SalesReceiptTransaction(Integer empId, long date, Double amount) {
+    public SalesReceiptTransaction(Integer empId, LocalDate date, Double amount) {
         this.empId = empId;
         this.date = date;
         this.amount = amount;

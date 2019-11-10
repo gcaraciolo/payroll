@@ -1,5 +1,6 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,13 +18,13 @@ public class CommissionedClassification implements PaymentClassification {
         this.commissionRate = commissionRate;
     }
 
-    public SalesReceipt addSalesReceipt(long date, Double amount) {
+    public SalesReceipt addSalesReceipt(LocalDate date, Double amount) {
         var sr = new SalesReceipt(date, amount);
-        salesreceipts.put(Long.toString(date), sr);
+        salesreceipts.put(date.toString(), sr);
         return sr;
     }
 
-    public SalesReceipt getSalesReceipt(long date) {
-        return salesreceipts.get(Long.toString(date));
+    public SalesReceipt getSalesReceipt(LocalDate date) {
+        return salesreceipts.get(date.toString());
     }
 }

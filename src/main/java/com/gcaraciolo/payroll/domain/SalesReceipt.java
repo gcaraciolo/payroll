@@ -1,14 +1,16 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.LocalDate;
+
 import lombok.Getter;
 
 @Getter
 public class SalesReceipt {
 
-    private long date;
+    private LocalDate date;
     private Double amount;
 
-    public SalesReceipt(long date, Double amount) {
+    public SalesReceipt(LocalDate date, Double amount) {
         this.date = date;
         this.amount = amount;
     }

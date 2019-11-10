@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+
 @SpringBootTest
 public class PayrollTest {
 
@@ -68,13 +70,14 @@ public class PayrollTest {
         var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 1.0);
         t.execute();
 
-        var tct = new TimeCardTransaction(empId, 20011031, 8.0);
+        var postingDate = LocalDate.now();
+        var tct = new TimeCardTransaction(empId, postingDate, 8.0);
         tct.execute();
 
         var e = payrollDatabase.getEmployee(empId);
 
         var pc = (HourlyClassification) e.getPaymentClassification();
-        TimeCard tc = pc.getTimeCard(20011031);
+        TimeCard tc = pc.getTimeCard(postingDate);
         assertEquals(8.0, tc.getHours());
     }
 
@@ -84,13 +87,14 @@ public class PayrollTest {
         var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.0, 0.1);
         t.execute();
 
-        var srt = new SalesReceiptTransaction(empId, 20011101, 79000.00);
+        var postingDate = LocalDate.now();
+        var srt = new SalesReceiptTransaction(empId, postingDate, 79000.00);
         srt.execute();
 
         var e = payrollDatabase.getEmployee(empId);
 
         var pc = (CommissionedClassification) e.getPaymentClassification();
-        SalesReceipt tc = pc.getSalesReceipt(20011101);
+        SalesReceipt tc = pc.getSalesReceipt(postingDate);
         assertEquals(79000.00, tc.getAmount());
     }
 
@@ -107,10 +111,11 @@ public class PayrollTest {
 
         payrollDatabase.addUnionMember(memberId, e);
 
-        var sct = new ServiceChargeTransaction(memberId, 20011101, 12.95);
+        var postingDate = LocalDate.now();
+        var sct = new ServiceChargeTransaction(memberId, postingDate, 12.95);
         sct.execute();
 
-        ServiceCharge sc = af.getServiceCharge(20011101);
+        ServiceCharge sc = af.getServiceCharge(postingDate);
         assertNotNull(sc);
         assertEquals(12.95, sc.getAmount());
     }

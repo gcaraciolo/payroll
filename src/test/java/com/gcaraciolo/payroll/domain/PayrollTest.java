@@ -367,7 +367,7 @@ public class PayrollTest {
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
-        assertHourlyPaycheck(pc, payDate, (8 + 1.5) * 13.45);
+        assertHourlyPaycheck(pc, payDate, 127.77);
     }
 
     @Test
@@ -413,6 +413,31 @@ public class PayrollTest {
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
         assertHourlyPaycheck(pc, payDate, 107.6);
+    }
+
+    @Test
+    public void testPaySingleHourlyEmployeeWeekendTimeCards() {
+        int empId = 1;
+        {
+            var t = new AddHourlyEmployee(empId, "Guilherme", "Home", 13.45);
+            t.execute();
+        }
+        {
+            var workday = LocalDate.of(2001, 11, 3); // Saturday
+            var t = new TimeCardTransaction(empId, workday, 6.0);
+            t.execute();
+        }
+        {
+            var workday = LocalDate.of(2001, 11, 6);
+            var t = new TimeCardTransaction(empId, workday, 8.0);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 9); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertHourlyPaycheck(pc, payDate, 228.65);
     }
 
     private void assertHourlyPaycheck(Paycheck paycheck, LocalDate payDate, Double pay) {

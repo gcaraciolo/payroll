@@ -28,11 +28,22 @@ public class HourlyClassification implements PaymentClassification {
 
     @Override
     public Double calculatePay(LocalDate payDate) {
-        return timecards.values().stream().filter(tc -> isInPayPeriod(tc, payDate))
+        return timecards.values().stream().filter(tc -> tc.isInPayPeriod(payDate))
                 .map(tc -> calculatePayForTimeCard(tc)).reduce(0.0, (a, b) -> a + b);
     }
 
+    // If the customer wants more variations of pay calculation based on overtime,
+    // we should create
+    // and abstraction for it.
+    // Probably the timecard will have this abstraction.
     private Double calculatePayForTimeCard(TimeCard timecard) {
+        if (timecard.isInWeekday()) {
+            return calculatePayForWeekendTimeCard(timecard);
+        }
+        return calculatePayForWeekdayTimeCard(timecard);
+    }
+
+    private Double calculatePayForWeekdayTimeCard(TimeCard timecard) {
         Double STRAIGHT_TIME_HOURS = 8.0;
         Double OVERTIME_RATE = 1.5;
         Double overtime = Math.max(0.0, timecard.getHours() - STRAIGHT_TIME_HOURS);
@@ -40,9 +51,8 @@ public class HourlyClassification implements PaymentClassification {
         return straightTime * hourlyRate + overtime * hourlyRate * OVERTIME_RATE;
     }
 
-    private boolean isInPayPeriod(TimeCard timecard, LocalDate payDate) {
-        int endDate = payDate.getDayOfMonth();
-        int startDate = payDate.getDayOfMonth() - 5;
-        return (timecard.getDate().getDayOfMonth() >= startDate) && (timecard.getDate().getDayOfMonth() <= endDate);
+    private Double calculatePayForWeekendTimeCard(TimeCard timecard) {
+        Double OVERTIME_RATE = 1.5;
+        return timecard.getHours() * OVERTIME_RATE * hourlyRate;
     }
 }

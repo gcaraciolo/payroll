@@ -1,5 +1,6 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 
 import lombok.Getter;
@@ -17,5 +18,10 @@ public class Paycheck {
         this.grossPay = grossPay;
         this.deductions = deductions;
         this.netPay = netPay;
+    }
+
+    public Double getNetPay() {
+        DecimalFormat df = new DecimalFormat("#.##");
+        return Double.parseDouble(df.format(netPay));
     }
 }

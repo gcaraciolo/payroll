@@ -14,4 +14,10 @@ public class SalesReceipt {
         this.date = date;
         this.amount = amount;
     }
+
+    public boolean isInPayPeriod(LocalDate payDate) {
+        int endDate = payDate.getDayOfMonth();
+        int startDate = payDate.getDayOfMonth() - 15;
+        return (date.getDayOfMonth() >= startDate) && (date.getDayOfMonth() < endDate);
+    }
 }

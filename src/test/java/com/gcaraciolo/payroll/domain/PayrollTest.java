@@ -322,7 +322,7 @@ public class PayrollTest {
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
-        assertHourlyPaycheck(pc, payDate, 0.0);
+        assertPaycheck(pc, payDate, 0.0);
     }
 
     @Test
@@ -347,7 +347,7 @@ public class PayrollTest {
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
-        assertHourlyPaycheck(pc, payDate, 134.5);
+        assertPaycheck(pc, payDate, 134.5);
     }
 
     @Test
@@ -367,7 +367,7 @@ public class PayrollTest {
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
-        assertHourlyPaycheck(pc, payDate, 127.77);
+        assertPaycheck(pc, payDate, 127.77);
     }
 
     @Test
@@ -412,7 +412,7 @@ public class PayrollTest {
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
-        assertHourlyPaycheck(pc, payDate, 107.6);
+        assertPaycheck(pc, payDate, 107.6);
     }
 
     @Test
@@ -437,10 +437,113 @@ public class PayrollTest {
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
-        assertHourlyPaycheck(pc, payDate, 228.65);
+        assertPaycheck(pc, payDate, 228.65);
     }
 
-    private void assertHourlyPaycheck(Paycheck paycheck, LocalDate payDate, Double pay) {
+    @Test
+    public void testPaySingleCommissionedEmployeeNoSalesReceipt() {
+        int empId = 1;
+        {
+            var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.00, 1.4);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 2); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertPaycheck(pc, payDate, 1000.00);
+    }
+
+    @Test
+    public void testPaySingleCommissionedEmployeeOnWrongDate() {
+        int empId = 1;
+        {
+            var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.00, 1.4);
+            t.execute();
+        }
+        {
+            var payDate = LocalDate.of(2001, 11, 9); // Friday
+            var pt = new PaydayTransaction(payDate);
+            pt.execute();
+            Paycheck pc = pt.getPaycheck(empId);
+            assertTrue(pc == null);
+        }
+        {
+            var payDate = LocalDate.of(2001, 11, 13); // Thursday
+            var pt = new PaydayTransaction(payDate);
+            pt.execute();
+            Paycheck pc = pt.getPaycheck(empId);
+            assertTrue(pc == null);
+        }
+    }
+
+    @Test
+    public void testPaySingleCommissionedEmployeeWithSalesReceipt() {
+        int empId = 1;
+        {
+            var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.00, 0.003);
+            t.execute();
+        }
+        {
+            var t = new SalesReceiptTransaction(empId, LocalDate.of(2001, 11, 4), 79000.00);
+            t.execute();
+        }
+        {
+            var t = new SalesReceiptTransaction(empId, LocalDate.of(2001, 11, 14), 90000.00);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 16); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertPaycheck(pc, payDate, 1507.00);
+    }
+
+    @Test
+    public void testPaySingleCommissionedEmployeeSalesReceiptInPayDay() {
+        int empId = 1;
+        {
+            var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.00, 0.003);
+            t.execute();
+        }
+        {
+            var t = new SalesReceiptTransaction(empId, LocalDate.of(2001, 11, 16), 130000.00);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 16); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertPaycheck(pc, payDate, 1000.00);
+    }
+
+    @Test
+    public void testPaySingleCommissionedEmployeeSalesReceiptSpanningPeriods() {
+        int empId = 1;
+        {
+            var t = new AddCommissionedEmployee(empId, "Guilherme", "Home", 1000.00, 0.003);
+            t.execute();
+        }
+        {
+            var t = new SalesReceiptTransaction(empId, LocalDate.of(2001, 11, 1), 79000.00);
+            t.execute();
+        }
+        {
+            var t = new SalesReceiptTransaction(empId, LocalDate.of(2001, 11, 22), 90000.00);
+            t.execute();
+        }
+
+        var payDate = LocalDate.of(2001, 11, 30); // Friday
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertPaycheck(pc, payDate, 1270.00);
+    }
+
+    private void assertPaycheck(Paycheck paycheck, LocalDate payDate, Double pay) {
         assertTrue(paycheck != null);
         assertTrue(paycheck.getPayDate().equals(payDate));
         assertEquals(paycheck.getNetPay(), pay);

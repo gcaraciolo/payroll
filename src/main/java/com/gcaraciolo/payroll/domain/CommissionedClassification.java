@@ -30,6 +30,15 @@ public class CommissionedClassification implements PaymentClassification {
 
     @Override
     public Double calculatePay(LocalDate payDate) {
-        return salary;
+        return salary + commissions(payDate);
+    }
+
+    private Double commissions(LocalDate payDate) {
+        return salesreceipts.values().stream().filter(sr -> sr.isInPayPeriod(payDate))
+                .map(sr -> calculateSalesReceiptCommission(sr)).reduce(0.0, (a, b) -> a + b);
+    }
+
+    private Double calculateSalesReceiptCommission(SalesReceipt salesReceipt) {
+        return salesReceipt.getAmount() * commissionRate;
     }
 }

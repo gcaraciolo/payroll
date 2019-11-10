@@ -25,7 +25,7 @@ public class SalesReceiptTransaction implements Transaction {
                 var cc = (CommissionedClassification) pc;
                 cc.addSalesReceipt(date, amount);
             } else {
-                throw new IllegalStateException("Tried to add timecard to non-hourly employee");
+                throw new IllegalStateException("Tried to add salesreceipt to non-commissioned employee");
             }
         } else {
             throw new IllegalStateException("Employee not found");

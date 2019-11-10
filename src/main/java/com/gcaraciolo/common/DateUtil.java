@@ -3,6 +3,7 @@ package com.gcaraciolo.common;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DateUtil {
 
@@ -33,5 +34,9 @@ public class DateUtil {
         }
 
         return biweeklydays;
+    }
+
+    public boolean isAWeekday() {
+        return Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(date.getDayOfWeek());
     }
 }

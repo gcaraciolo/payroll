@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.gcaraciolo.common.DatePeriod;
+import com.gcaraciolo.common.DateUtil;
 
 import lombok.Getter;
 
@@ -39,7 +40,8 @@ public class HourlyClassification implements PaymentClassification {
     // and abstraction for it.
     // Probably the timecard will have this abstraction.
     private Double calculatePayForTimeCard(TimeCard timecard) {
-        if (timecard.isInWeekday()) {
+        var postingDay = new DateUtil(timecard.getDate());
+        if (postingDay.isAWeekday()) {
             return calculatePayForWeekendTimeCard(timecard);
         }
         return calculatePayForWeekdayTimeCard(timecard);

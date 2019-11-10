@@ -1,5 +1,6 @@
 package com.gcaraciolo.payroll.domain;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,21 @@ public class UnionAffiliation implements Affiliation {
 
     @Override
     public Double calculateDeductions(LocalDate date) {
-        return 0.0;
+        return dues * accruedsInPayDay(date);
+    }
+
+    private int accruedsInPayDay(LocalDate date) {
+        int accrued = 0;
+        LocalDate dayIterator = LocalDate.of(date.getYear(), date.getMonthValue(), 1);
+        LocalDate lastDayOfMonth = LocalDate.of(date.getYear(), date.getMonthValue(), date.getMonth().maxLength());
+
+        while (dayIterator.isBefore(lastDayOfMonth) || dayIterator.isEqual(lastDayOfMonth)) {
+            if (dayIterator.getDayOfWeek() == DayOfWeek.FRIDAY) {
+                accrued++;
+            }
+            dayIterator = dayIterator.plusDays(1);
+        }
+
+        return accrued;
     }
 }

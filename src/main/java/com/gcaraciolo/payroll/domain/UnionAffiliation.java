@@ -33,7 +33,7 @@ public class UnionAffiliation implements Affiliation {
 
     @Override
     public Double calculateDeductions(DatePeriod datePeriod) {
-        return dues * numberOfDeductableWeeks(datePeriod);
+        return (dues * numberOfDeductableWeeks(datePeriod)) + calculateServiceCharges(datePeriod);
     }
 
     private int numberOfDeductableWeeks(DatePeriod datePeriod) {
@@ -46,5 +46,10 @@ public class UnionAffiliation implements Affiliation {
         }
 
         return deductableWeeks;
+    }
+
+    private Double calculateServiceCharges(DatePeriod datePeriod) {
+        return servicecharges.values().stream().filter(sc -> datePeriod.containsDate(sc.getDate()))
+                .map(sc -> sc.getAmount()).reduce(0.0, (a, b) -> a + b);
     }
 }

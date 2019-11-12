@@ -1,6 +1,7 @@
 package com.gcaraciolo.common;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,7 @@ public class DatePeriod {
     private LocalDate end;
 
     public boolean containsDate(LocalDate date) {
-        return date.isAfter(begin.minusDays(1)) && date.isBefore(end);
+        return date.atTime(LocalTime.MAX).isAfter(begin.atTime(LocalTime.MIN))
+                && date.atTime(LocalTime.MAX).isBefore(end.atTime(LocalTime.MIN));
     }
 }

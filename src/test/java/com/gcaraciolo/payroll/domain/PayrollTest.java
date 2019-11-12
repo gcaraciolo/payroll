@@ -571,13 +571,55 @@ public class PayrollTest {
         new AddHourlyEmployee(empId, "Guilherme", "Home", 4.75).execute();
         new ChangeEmployeeMemberTransaction(empId, memberId, 2.15).execute();
         new TimeCardTransaction(empId, LocalDate.of(2001, 11, 27), 8.0).execute();
-        ;
 
         var payDate = LocalDate.of(2001, 11, 30);
         var pt = new PaydayTransaction(payDate);
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
         assertPaycheck(pc, payDate, 35.85);
+    }
+
+    @Test
+    public void testHourlyEmloyeeUnionMemberServiceCharge() {
+        int empId = 1;
+        int memberId = 124;
+
+        new AddHourlyEmployee(empId, "Guilherme", "Home", 15.24).execute();
+        new ChangeEmployeeMemberTransaction(empId, memberId, 9.42).execute();
+
+        new TimeCardTransaction(empId, LocalDate.of(2001, 11, 6), 8.0).execute();
+
+        new ServiceChargeTransaction(memberId, LocalDate.of(2001, 11, 8), 19.42).execute();
+
+        var payDate = LocalDate.of(2001, 11, 9);
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+
+        Paycheck pc = pt.getPaycheck(empId);
+        assertPaycheck(pc, payDate, (8 * 15.24) - (9.42 + 19.42));
+    }
+
+    @Test
+    public void testServiceChargeSpanningMultiplePayPeriods() {
+        int empId = 1;
+        int memberId = 124;
+
+        new AddHourlyEmployee(empId, "Guilherme", "Home", 15.24).execute();
+        new ChangeEmployeeMemberTransaction(empId, memberId, 9.42).execute();
+
+        new TimeCardTransaction(empId, LocalDate.of(2001, 11, 6), 8.0).execute();
+
+        new ServiceChargeTransaction(memberId, LocalDate.of(2001, 11, 2), 100.00).execute(); // previous Friday
+        new ServiceChargeTransaction(memberId, LocalDate.of(2001, 11, 16), 200.00).execute(); // next Friday
+
+        new ServiceChargeTransaction(memberId, LocalDate.of(2001, 11, 8), 19.42).execute();
+
+        var payDate = LocalDate.of(2001, 11, 9);
+        var pt = new PaydayTransaction(payDate);
+        pt.execute();
+
+        Paycheck pc = pt.getPaycheck(empId);
+        assertPaycheck(pc, payDate, (8 * 15.24) - (9.42 + 19.42));
     }
 
     private void assertPaycheck(Paycheck paycheck, LocalDate payDate, Double pay) {
